@@ -48,15 +48,33 @@ target_link_libraries(qt
 set_target_properties(qt PROPERTIES
     VERSION ${PROJECT_VERSION}
     SOVERSION ${PROJECT_VERSION_MAJOR}
+    INTERFACE
 )
 
-export(TARGETS qt FILE Qt2Config.cmake)
+install(TARGETS qt EXPORT Qt2Targets
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
 
-install(EXPORT Qt2Config DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/qt2/cmake)
-install(TARGETS qt EXPORT Qt2Config
-    ARCHIVE  DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    LIBRARY  DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    RUNTIME  DESTINATION ${CMAKE_INSTALL_BINDIR})
+include(CMakePackageConfigHelpers)
+write_basic_package_version_file(
+    "${CMAKE_CURRENT_BINARY_DIR}/Qt2/Qt2ConfigVersion.cmake"
+    VERSION ${PROJECT_VERSION}
+    COMPATIBILITY AnyNewerVersion
+)
+
+export(EXPORT Qt2Targets
+    FILE "${CMAKE_CURRENT_BINARY_DIR}/Qt2/Qt2Targets.cmake"
+    NAMESPACE Qt2::
+)
+
+configure_file(cmake/Qt2Config.cmake
+    "${CMAKE_CURRENT_BINARY_DIR}/Qt2/Qt2Config.cmake"
+    COPYONLY
+)
+
+#install(EXPORT Qt2Config DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/qt2/cmake)
 #install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 
